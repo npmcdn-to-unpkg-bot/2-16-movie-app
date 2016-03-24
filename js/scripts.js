@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+	var genreArray = [];
+
 	$('#searchFilter').change(function(){
 		console.log($(this).val());
 	})
@@ -19,11 +21,27 @@ $(document).ready(function(){
 	});
 
 
-	var genreURL = baseURL + '/genre/movie/list' + apiKey;
-	//Make an AJAX call to the config URL.
-	$.getJSON(genreURL, function(configData){
-		//Set our global var imagePath to the result of our AJAX call
-		imagePath = configData.images.base_url;
+	var genreURL = baseURL + 'genre/movie/list' + apiKey;
+	//Make an AJAX call to the genre URL.
+	$.getJSON(genreURL, function(genreData){
+		// console.log(genreData);
+		for(i=0; i<genreData.genres.length; i++){
+			var genreID = genreData.genres[i].id;
+			var genreName = genreData.genres[i].name;
+			genreArray[genreID]= genreName;
+		}
+
+		var genreHTML = '';
+		for(i=0; i<genreArray.length; i++){
+			if(genreArray[i] != undefined){
+				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
+			}
+		}
+
+		$('#genre-buttons').html(genreHTML);
+
+
+		console.dir(genreArray);
 	});
 
 
@@ -31,12 +49,15 @@ $(document).ready(function(){
 	var nowPlaying = baseURL + 'movie/now_playing' + apiKey;
 	//Make an AJAX call to the now playing URL.
 	$.getJSON(nowPlaying, function(movieData){
-		console.log(movieData);
+		// console.log(movieData);
 		var newHTML = '';
 		//Loop through all the results and set up an image url.
 		for(i=0; i<movieData.results.length; i++){
+			console.log(movieData.results[i]);
 			var currentPoster = imagePath + 'w300' + movieData.results[i].poster_path;
-			newHTML += '<div class="col-sm-3 now-playing">';
+			var firstGenreID = movieData.results[i].genre_ids[0];
+			var genreName = genreArray[firstGenreID];
+			newHTML += '<div class="col-sm-3 now-playing ' + genreName + '">';
 			newHTML += '<img src="' + currentPoster + '">';
 			newHTML += '</div>';
 			// console.log(currentPoster);
