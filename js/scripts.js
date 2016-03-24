@@ -29,19 +29,50 @@ $(document).ready(function(){
 		$('#poster-grid').html(newHTML);
 	});
 
+
 	$('#movie-form').submit(function(event){
-		var userSearch = $('.typeahead').val();
-		console.log(userSearch);
-		userSearch = $('#searchText').val();
-		console.log(userSearch);
-		// var typeSearch = ($('#movie-form .typeahead').typeahead('val'));
-		// console.log($('#movie-form .typeahead').typeahead('val'));
-		// console.log (typeSearch);
+		// var userSearch = $('.typeahead').typeahead('val');
+		// console.log(userSearch);
+
+		//Value the user searched for
+		var userSearch = $('#searchText').val();
+		//Filter the user searched for (movie, actor, etc.)
+		var searchFilter = $('#searchFilter').val();
+		console.log(searchFilter);
+
+		//Setup the endpoing to use the value of the select box as the parameter after /search
+		var searchURL = baseURL + 'search/' + searchFilter + apiKey + '&query=' + encodeURI(userSearch);
+
+		//Set up a var with the search/movie endpoint. Make sure to include the query string
+		//the query string needs to be encoded in case the user has some odd symbos or characters
+		// -- FOR WHEN WE WERE ONLY SEARCHING FOR MOVIES - var movieSarch = baseURL + 'search/movie' + apiKey + '&query=' + encodeURI(userSearch);
+		//Make an AJAX call to the now playing URL.q
+		$.getJSON(searchURL, function(movieData){
+			console.log(movieData);
+			var newHTML = '';
+			//Loop through all the results and set up an image url.
+			for(i=0; i<movieData.results.length; i++){
+				// console.log(movieData.results[i]);
+				if ((searchFilter == 'person') || ((searchFilter == 'multi') && (movieData.results[i].media_type == 'person'))){
+					var currentPoster = imagePath + 'w300' + movieData.results[i].profile_path;
+				}else{
+					var currentPoster = imagePath + 'w300' + movieData.results[i].poster_path;
+				}
+				newHTML += '<div class="col-sm-3">';
+				newHTML += '<img src="' + currentPoster + '">';
+				newHTML += '</div>';
+				// console.log(currentPoster);
+			}
+			$('#poster-grid').html(newHTML);
+		});		
 		event.preventDefault();
 	});
 
 });
 
+// $('#searchText').keyup(function(){
+// 	$(this).val();
+// });
 
 var substringMatcher = function(strs) {
   return function findMatches(q, cb) {
