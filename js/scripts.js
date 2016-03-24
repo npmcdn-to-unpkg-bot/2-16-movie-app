@@ -34,12 +34,12 @@ $(document).ready(function(){
 		var genreHTML = '';
 		for(i=0; i<genreArray.length; i++){
 			if(genreArray[i] != undefined){
-				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default" value="'+genreArray[i]+'">'
+				genreHTML += '<input type="button" id="'+genreArray[i]+'" class="btn btn-default genre-button" value="'+genreArray[i]+'">'
 			}
 		}
 
 		$('#genre-buttons').html(genreHTML);
-
+		addGenreClicks();
 
 		console.dir(genreArray);
 	});
@@ -104,15 +104,10 @@ $(document).ready(function(){
 				// console.log(currentPoster);
 			}
 			$('#poster-grid').html(newHTML);
+			getIsotope();
 		});		
 		event.preventDefault();
 	});
-
-	//isotope listener
-	$('#comedy-filter').click(function(){
-		$('#poster-grid').isotope({ filter: '.comedy' })
-	});
-
 });
 
 // $('#searchText').keyup(function(){
@@ -177,12 +172,21 @@ $('#movie-form .typeahead').typeahead(
 );
 
 function getIsotope(){
-	$('#poster-grid').isotope(
+	var theGrid = $('#poster-grid').isotope(
 		{
 	  		// options
-	  		itemSelector: '.now-playing',
-	  		layoutMode: 'fitRows'
-	});			
+	  		itemSelector: '.now-playing'
+		});	
+
+	// layout Isotope after each image loads
+	theGrid.imagesLoaded().progress( function() {
+  		theGrid.isotope('layout');
+	});
+
 }
 
-
+function addGenreClicks(){
+	$('.genre-button').click(function(){
+		$('#poster-grid').isotope({ filter: '.'+ $(this).attr('id') });
+	});
+}
