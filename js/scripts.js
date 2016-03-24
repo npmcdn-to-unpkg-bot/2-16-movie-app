@@ -18,6 +18,15 @@ $(document).ready(function(){
 		imagePath = configData.images.base_url;
 	});
 
+
+	var genreURL = baseURL + '/genre/movie/list' + apiKey;
+	//Make an AJAX call to the config URL.
+	$.getJSON(genreURL, function(configData){
+		//Set our global var imagePath to the result of our AJAX call
+		imagePath = configData.images.base_url;
+	});
+
+
 	//Now Playing is default on page load. Set up the URL
 	var nowPlaying = baseURL + 'movie/now_playing' + apiKey;
 	//Make an AJAX call to the now playing URL.
