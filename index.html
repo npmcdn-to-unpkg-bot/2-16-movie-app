@@ -10,15 +10,16 @@
 
 	<div class="container">
 
-
 		<div class="row">
 			<div class="col-sm-12 text-center">
-				<input type="text" placeholder="Searchf for...">
-				<input type="submit" class="btn btn-primary" value="search">
-				<select>
-					<option value="">Here is an option</option>
-					<option value="">Here is an option</option>
-				</select>
+				<form id="movie-form">
+					<input type="text" id="searchText" class="typeahead" placeholder="Search for...">
+					<input type="submit" class="btn btn-primary" value="search">
+					<select>
+						<option value="">Here is an option</option>
+						<option value="">Here is an option</option>
+					</select>
+				</form>
 			</div>
 		</div>
 
@@ -36,6 +37,7 @@
 	</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="js/scripts.js"></script>
 
 </body>
