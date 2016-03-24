@@ -57,7 +57,7 @@ $(document).ready(function(){
 			var currentPoster = imagePath + 'w300' + movieData.results[i].poster_path;
 			var firstGenreID = movieData.results[i].genre_ids[0];
 			var genreName = genreArray[firstGenreID];
-			newHTML += '<div class="col-sm-3 now-playing ' + genreName + '">';
+			newHTML += '<div class="col-sm-3 now-playing ' + encodeURI(genreName) + '">';
 			newHTML += '<img src="' + currentPoster + '">';
 			newHTML += '</div>';
 			// console.log(currentPoster);
