@@ -1,4 +1,9 @@
 $(document).ready(function(){
+
+	$('#searchFilter').change(function(){
+		console.log($(this).val());
+	})
+
 	var imagePath;
 	//The URL of all our API calls
 	var baseURL = 'https://api.themoviedb.org/3/';
@@ -17,16 +22,19 @@ $(document).ready(function(){
 	var nowPlaying = baseURL + 'movie/now_playing' + apiKey;
 	//Make an AJAX call to the now playing URL.
 	$.getJSON(nowPlaying, function(movieData){
+		console.log(movieData);
 		var newHTML = '';
 		//Loop through all the results and set up an image url.
 		for(i=0; i<movieData.results.length; i++){
 			var currentPoster = imagePath + 'w300' + movieData.results[i].poster_path;
-			newHTML += '<div class="col-sm-3">';
+			newHTML += '<div class="col-sm-3 now-playing">';
 			newHTML += '<img src="' + currentPoster + '">';
 			newHTML += '</div>';
 			// console.log(currentPoster);
 		}
 		$('#poster-grid').html(newHTML);
+
+		getIsotope();
 	});
 
 
@@ -38,7 +46,7 @@ $(document).ready(function(){
 		var userSearch = $('#searchText').val();
 		//Filter the user searched for (movie, actor, etc.)
 		var searchFilter = $('#searchFilter').val();
-		console.log(searchFilter);
+		// console.log(searchFilter);
 
 		//Setup the endpoing to use the value of the select box as the parameter after /search
 		var searchURL = baseURL + 'search/' + searchFilter + apiKey + '&query=' + encodeURI(userSearch);
@@ -48,7 +56,6 @@ $(document).ready(function(){
 		// -- FOR WHEN WE WERE ONLY SEARCHING FOR MOVIES - var movieSarch = baseURL + 'search/movie' + apiKey + '&query=' + encodeURI(userSearch);
 		//Make an AJAX call to the now playing URL.q
 		$.getJSON(searchURL, function(movieData){
-			console.log(movieData);
 			var newHTML = '';
 			//Loop through all the results and set up an image url.
 			for(i=0; i<movieData.results.length; i++){
@@ -58,6 +65,9 @@ $(document).ready(function(){
 				}else{
 					var currentPoster = imagePath + 'w300' + movieData.results[i].poster_path;
 				}
+
+				// console.log(movieData.results[i]);
+
 				newHTML += '<div class="col-sm-3">';
 				newHTML += '<img src="' + currentPoster + '">';
 				newHTML += '</div>';
@@ -66,6 +76,11 @@ $(document).ready(function(){
 			$('#poster-grid').html(newHTML);
 		});		
 		event.preventDefault();
+	});
+
+	//isotope listener
+	$('#comedy-filter').click(function(){
+		$('#poster-grid').isotope({ filter: '.comedy' })
 	});
 
 });
@@ -96,18 +111,48 @@ var substringMatcher = function(strs) {
   };
 };
 
+
+var arrayToSearch = [];
+for (i=1; i <= 6; i++) {
+	var popularMovies = 'https://api.themoviedb.org/3/movie/popular?api_key=fec8b5ab27b292a68294261bb21b04a5&page=' + i;
+	console.log(popularMovies);
+	$.getJSON(popularMovies, function(popularM){
+		for(j=0; j<popularM.results.length; j++){
+			arrayToSearch.push(popularM.results[j].original_title);
+		}
+		// console.log(arrayToSearch);
+	});
+}
+
+
+
+
+
 var actors = [
 	'Brad Pitt',
 	'Michael Douglas',
 	'Al Pacino'
 ];
 
-$('#movie-form .typeahead').typeahead({
-  hint: true,
-  highlight: true,
-  minLength: 1
-},
-{
-  name: 'actors',
-  source: substringMatcher(actors)
-});
+$('#movie-form .typeahead').typeahead(
+	{
+  		hint: true,
+  		highlight: true,
+  		minLength: 3
+	},
+	{
+  		name: 'actors',
+  		source: substringMatcher(actors)
+	}
+);
+
+function getIsotope(){
+	$('#poster-grid').isotope(
+		{
+	  		// options
+	  		itemSelector: '.now-playing',
+	  		layoutMode: 'fitRows'
+	});			
+}
+
+
